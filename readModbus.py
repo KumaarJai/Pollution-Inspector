@@ -37,9 +37,12 @@ def extractData(device, outData):
 	print('Extracting data...')
 	outDataBytesCount = outData[3]
 	bytesPerParam = outDataBytesCount/device["PARAM_COUNT"]
-
+	bytePosition = 0
 	for i in range(3,len(outData)-2):
-		#continue code here
+		bytePosition = i
+		for j in range(0,bytesPerParam):
+			#some logic here
+			print("some logic here...")
 
 
 def isOutputAligned(device, outData):
