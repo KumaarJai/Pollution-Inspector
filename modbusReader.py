@@ -65,6 +65,7 @@ def connectToDevice():
 def readModbusData(ser, device, targetFile):
     outData = []
     print(device["MAC_ID"], ' Requesting : ', device["HEX_INPUT_STRING"])
+    targetFile.write(device["MAC_ID"]+ ' Requesting : '+ device["HEX_INPUT_STRING"])
     ser.write(device["HEX_INPUT_STRING"])
     out = ser.readline()
     for byte in out:
@@ -72,7 +73,7 @@ def readModbusData(ser, device, targetFile):
         
     if outData !=[]:
         if isOutputAligned(device, outData):
-            extractData2(device, outData)
+            extractData2(device, outData, targetFile)
 
 
 def extractData(device, outData):
@@ -87,10 +88,13 @@ def extractData(device, outData):
             print("some logic here...")
 
 
-def extractData2(device, outData):
+def extractData2(device, outData, targetFile):
     #print("printing data in extractData2")
     print('Reply : ',outData)
     print('\n')
+    
+    targetFile.write('Reply : '+outData)
+    targetFile.write('\n')
 
 
 def isOutputAligned(device, outData):
