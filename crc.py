@@ -1,6 +1,5 @@
 '''
 Created on Jan 23, 2019
-
 @author: Ajay_Rabidas
 '''
 # from PyCRC.CRCCCITT import CRCCCITT
@@ -8,7 +7,14 @@ Created on Jan 23, 2019
 #     print(CRCCCITT().calculate(input))
 
 import json
+import csv
+import datetime
 from ctypes import *
+import re, uuid 
+macid= ':'.join(re.findall('..', '%012x' % uuid.getnode()))
+    
+def getMacId():
+    return macid
 
 def HexToFloat(s):
     i = int(s, 16)                   # convert from hex to a Python int
@@ -40,8 +46,18 @@ def extractData(demoArr):
         start = start + bytesPerParam
         end = end +bytesPerParam
             
+    paramMap = ''+str(json.dumps(outputParamMap))
+    print(paramMap) 
+    writetoFile(outputParamMap)
     
-    print(json.dumps(outputParamMap)) 
+    
+def writetoFile(paramMap):
+    file = 'D:\\AJAY_545732\\PROJECTS\\Dektos\\output\\data.tsv'
+    csvFile = open(file, 'a')
+    csvWriter = csv.writer(csvFile, delimiter='\t', lineterminator='\n')
+    csvWriter.writerow([getMacId(), paramMap, datetime.datetime.now()])
+    csvFile.close()
+
 
 
 if __name__ == '__main__':
