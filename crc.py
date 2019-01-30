@@ -8,11 +8,12 @@ Created on Jan 23, 2019
 
 import json
 import csv
-import datetime
-from ctypes import *
+from datetime import datetime, timedelta
 import re, uuid 
+from ctypes import *
+import modbus_python.configuration as CONF
 macid= ':'.join(re.findall('..', '%012x' % uuid.getnode()))
-    
+
 def getMacId():
     return macid
 
@@ -25,7 +26,7 @@ def HexToFloat(s):
 
 def extractData(demoArr):
     print('Extracting data...')
-    PARAMS_LIST = ['NO','O2', 'S2']
+    PARAMS_LIST = ["NO","O2", "S2"]
     outputParamMap = {}
     dataBytesStartIndex = 3
     NumberOfOutDataBytesRecieved = demoArr[2]
@@ -40,28 +41,32 @@ def extractData(demoArr):
         for i in range(start,end):
             val=val + str(demoArr[i])
         print(val)
-        outputParamMap[PARAMS_LIST[count]] = int(val,16)
+        outputParamMap[str(PARAMS_LIST[count])] = int(val,16)
         
         count = count+1
         start = start + bytesPerParam
         end = end +bytesPerParam
-            
-    paramMap = ''+str(json.dumps(outputParamMap))
-    print(paramMap) 
-    writetoFile(outputParamMap)
+        
+    paramMapJSON = json.dumps(outputParamMap)
+    writetoFile(paramMapJSON) 
     
     
-def writetoFile(paramMap):
-    file = 'D:\\AJAY_545732\\PROJECTS\\Dektos\\output\\data.tsv'
-    csvFile = open(file, 'a')
-    csvWriter = csv.writer(csvFile, delimiter='\t', lineterminator='\n')
-    csvWriter.writerow([getMacId(), paramMap, datetime.datetime.now()])
-    csvFile.close()
-
+def writetoFile(paramMapJSON):
+    
+    uniqueIdentifier = datetime.now().strftime('%Y-%m-%d#%H-%M')
+    #print(datetime.now().strftime('%Y-%m-%d#%H-%M'))
+    #print((datetime.now() + timedelta(minutes=30)).strftime('%Y-%m-%d#%H-%M') ) 
+    file = 'data_'+uniqueIdentifier+'.tsv'
+    
+    targetFile = open(CONF.OUTPUT_PATH + file, 'a')
+    csvWriter = csv.writer(targetFile, delimiter='\t', lineterminator='\n', quoting=csv.QUOTE_NONE, quotechar='' )
+    csvWriter.writerow([getMacId(), paramMapJSON, datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
+    targetFile.close()
 
 
 if __name__ == '__main__':
     demoArr = [2,3,6,2,52,33,52,22,22,1,1]
     print(demoArr)
-    extractData(demoArr)
+    while True:
+        extractData(demoArr)
     
