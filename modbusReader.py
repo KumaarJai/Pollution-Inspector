@@ -4,31 +4,56 @@ Created on Jan 15, 2019
 '''
 
 import logging as LOGGER
+import sys
+
 from modbusInterface import configuration as CONF
 from modbusInterface import dektosExternalPackageInstaller as DEKTOS_INSTALLER
 
-LOG_FILENAME = CONF.BASE_PATH+'dektos.log'
-LOGGER.basicConfig(filename=LOG_FILENAME,level=LOGGER.DEBUG)
-LOGGER.debug('Log file initiated, System starting up...')
+LOG_FILENAME = CONF.BASE_PATH+'log/dektos.log'
+#LOGGER.basicConfig(filename=LOG_FILENAME,level=LOGGER.DEBUG)
 
-LOGGER.debug('Installing external python packages required to run this application..')
-DEKTOS_INSTALLER.installPackage('pyserial')
-DEKTOS_INSTALLER.installPackage('PyCRC')
-LOGGER.debug('Installation complete. System started successfully')
+LOGGER.basicConfig(
+    level=LOGGER.INFO,
+    format="%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s",
+    handlers=[
+        LOGGER.FileHandler("{0}.log".format(LOG_FILENAME)),
+        LOGGER.StreamHandler()
+    ])
+
+LOGGER.debug('Log file initiated, System starting up...') 
+
+
+try:
+    LOGGER.debug('Installing external python packages required to run this application..')
+    DEKTOS_INSTALLER.installMandatoryPackages()
+    LOGGER.info('Installation complete. System started successfully')
+except Exception as e:
+    LOGGER.info('Installation Failed. System will exit...')
+    LOGGER.exception(e)
+    sys.exit(1)
+
 
 import serial
+import re, uuid 
 import time
-from PyCRC.CRCCCITT import CRCCCITT
+import json
+import csv
+from datetime import datetime
+from datetime import timedelta
+#from PyCRC.CRC16 import CRC16
 
 
+def getMacId():
+    return ':'.join(re.findall('..', '%012x' % uuid.getnode()))
 
 
 def connectToDevice():
     try:
-        ser = serial.Serial(CONF.PORT, CONF.BAUD_RATE,timeout=CONF.TIMEOUT)
-        if(ser.isOpen()):
-            print(ser.name + ' is open--------------------------------------------')
-            LOGGER.debug(ser.name + ' is open--------------------------------------------')
+        ser = ''
+#         ser = serial.Serial(CONF.PORT, CONF.BAUD_RATE,timeout=CONF.TIMEOUT)
+#         if(ser.isOpen()):
+#             print(ser.name + ' is open--------------------------------------------')
+#             LOGGER.info(ser.name + ' is open--------------------------------------------')
     except:
         print(ser.name + ' : Failed to open')
         LOGGER.debug(ser.name + '  : Failed to open')
@@ -37,20 +62,27 @@ def connectToDevice():
     
     try:
         next_time = 0
-        fileName = 'G:\\work\\vasthi\\out\\dektos_'+str(time.clock())+'.txt'
-        f = open(fileName, 'a')
-        print("-------new file ",fileName)
+        file = CONF.OUTPUT_PATH + 'data_'+datetime.now().strftime('%Y-%m-%d#%H-%M')+'.tsv'
+        f = open(file, 'a')
+        print("-------new file ",file)
+        
         while True:
-            if time.clock() >= next_time and next_time>0:
+            if next_time != 0 and datetime.now() >= next_time:
+                print(next_time)
                 f.close()
-                next_time = time.time()+20
-                fileName = 'G:\\work\\vasthi\\out\\dektos_'+str(time.clock())+'.txt'
-                print("file name ",fileName)
-            f = open(fileName, 'a')
-            
+                next_time = next_time + timedelta(seconds=30) 
+                file = CONF.OUTPUT_PATH + 'data_'+datetime.now().strftime('%Y-%m-%d#%H-%M')+'.tsv'
+                print("file name ",file)
+                f = open(file, 'a')
+                
+            elif next_time == 0:
+                next_time = datetime.now() + timedelta(seconds=30) 
+                
+                
             for i in range(0, CONF.DEVICES_COUNT):
                 device = CONF.DEVICE_LIST[i]
-                readModbusData(ser, device, f)
+                #readModbusData(ser, device, f)
+                readDummyData(ser, device, f)
             
             print('\n initiating next cycle')
             print('_____________________________________________________________________________\n')
@@ -61,11 +93,17 @@ def connectToDevice():
         exit()
 
 
+def readDummyData(ser, device, targetFile):
+    outData = [2,3,6,2,52,33,52,22,22,1,1]
+    print(device["MAC_ID"], ' Requesting : ', device["HEX_INPUT_STRING"])
+    #targetFile.write(device["MAC_ID"]+ ' Requesting : '+ str(device["HEX_INPUT_STRING"]))
+    extractData(device, outData, targetFile)
+
 
 def readModbusData(ser, device, targetFile):
     outData = []
     print(device["MAC_ID"], ' Requesting : ', device["HEX_INPUT_STRING"])
-    targetFile.write(device["MAC_ID"]+ ' Requesting : '+ device["HEX_INPUT_STRING"])
+    targetFile.write(device["MAC_ID"]+ ' Requesting : '+ str(device["HEX_INPUT_STRING"]))
     ser.write(device["HEX_INPUT_STRING"])
     out = ser.readline()
     for byte in out:
@@ -73,29 +111,44 @@ def readModbusData(ser, device, targetFile):
         
     if outData !=[]:
         if isOutputAligned(device, outData):
-            extractData2(device, outData, targetFile)
+            extractData(device, outData, targetFile)
 
 
-def extractData(device, outData):
+def extractData(device, outData, targetFile):
     print('Extracting data...')
-    outDataBytesCount = outData[3]
-    bytesPerParam = outDataBytesCount/device["PARAM_COUNT"]
-    bytePosition = 0
-    for i in range(3,len(outData)-2):
-        bytePosition = i
-        for j in range(0,bytesPerParam):
-            #some logic here
-            print("some logic here...")
-
-
-def extractData2(device, outData, targetFile):
-    #print("printing data in extractData2")
-    print('Reply : ',outData)
-    print('\n')
+    PARAMS_LIST = device["PARAMS_LIST"]
+    dataBytesStartIndex = CONF.DATA_BYTES_START_INDEX
+    outputParamMap = {}
     
-    targetFile.write('Reply : '+outData)
-    targetFile.write('\n')
-
+    NumberOfOutDataBytesRecieved = outData[2]
+    paramCount = len(PARAMS_LIST)
+    bytesPerParam = int(NumberOfOutDataBytesRecieved/paramCount)
+    
+    start = dataBytesStartIndex
+    end = dataBytesStartIndex + bytesPerParam
+    count = 0
+    
+    while(count < paramCount):
+        val=''
+        for i in range(start,end):
+            val=val + str(outData[i])
+        #print(val)
+        outputParamMap[str(PARAMS_LIST[count])] = int(val,16)
+        
+        count = count+1
+        start = start + bytesPerParam
+        end = end +bytesPerParam
+        
+    paramMapJSON = json.dumps(outputParamMap)
+    writetoFile(paramMapJSON, targetFile) 
+    
+    
+def writetoFile(paramMapJSON, targetFile):
+    csvWriter = csv.writer(targetFile, delimiter='\t', lineterminator='\n', quoting=csv.QUOTE_NONE, quotechar='' )
+    csvWriter.writerow([getMacId(), paramMapJSON, datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
+    time.sleep(2)
+    #targetFile.close()
+    
 
 def isOutputAligned(device, outData):
 #     if outData[0]==device["SLAVE_ID"] and outData[1]==device["HOLDING_REGISTER"] and generateCRC(outData)==generateCRC(device["HEX_INPUT_STRING"]):
@@ -104,32 +157,6 @@ def isOutputAligned(device, outData):
 
 
 
-def generateCRC(data):
-    #incomplete logic
-    return data
-
-
-
-def readSerialData(device):
-    print(device["MAC_ID"]+' : Initiating serial data read...')
-
-
-def readModbus(ser):
-    count = 0
-    if(ser.isOpen()):
-        print(ser.name + ' is open---------------------------------------------------')
-    
-    while count <2:
-        outData = []
-        print('Sending...')
-        ser.write(b'\x02\x03\x00\x00\x00\x01\x84\x39')
-        out = ser.readline()
-        print(out)
-        count=count+1
-        for byte in out:
-            outData.append(byte)
-        print(outData) # present ascii
-    ser.close()
 
 if __name__ == '__main__':
     connectToDevice()

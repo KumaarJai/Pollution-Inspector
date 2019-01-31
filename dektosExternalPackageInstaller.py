@@ -11,8 +11,11 @@ import sys
 def installPackage(package):
     subprocess.call([sys.executable, "-m", "pip", "install", package])
 
+def installMandatoryPackages():
+    installPackage('pyserial')
+    installPackage('PyCRC')
+    installPackage('pymysql')
 
 if __name__ == '__main__':
     print("Dektos Msg : Installing mandatory python packages manually")
-    installPackage('pyserial')
-    installPackage('PyCRC')
+    installMandatoryPackages()
