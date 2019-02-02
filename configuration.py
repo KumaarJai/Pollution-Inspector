@@ -20,7 +20,6 @@ DATA_BYTES_START_INDEX = 3
 #CLIENT Details ----------------------------------------------:
 CLIENT_NAME='CLIENTXX_001'
 CLIENT_ID='CL_001'
-DEVICES_COUNT = 1
 DATA_UPLOAD_INTERVAL = 30
 
 #DATABASE DETAILS
@@ -38,8 +37,8 @@ DEVICE_1 = {
     "PROTOCOL" : "MODBUS",
     "SLAVE_ID" : 1,
     "HOLDING_REGISTER" : 3,
-    "START_REGISTER" : 0,
-    "BYTES_TO_READ" : 1,
+    "START_REGISTER" : 55,
+    "BYTES_TO_READ" : 2,
     "HEX_INPUT_STRING" : b'\x01\x03\x00\x55\x00\x02\xD4\x1B',
     "PARAMS_LIST" : ["NO"],
     "OUT_TYPE" : DATA_TYPE[2]

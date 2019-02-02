@@ -66,8 +66,9 @@ def generateInputString(device):
     
     
     final_input_string = slaveId + holdingRegister + start + bytesToRead
-    print(final_input_string.encode())
-    return final_input_string
+    print(final_input_string.encode('raw_unicode_escape'))
+    print(bytes(final_input_string,'utf-8'))
+    return final_input_string.encode('latin-1').decode('utf-8')
 
 
 def handleByteAbove255(val):
@@ -80,23 +81,23 @@ def handleByteAbove255(val):
 
 
 if __name__ == '__main__':
-#     DEVICE_3 = {
-#         "MAC_ID" : "MACABCXX0003",
-#         "PROTOCOL" : "MODBUS",
-#         "SLAVE_ID" : 2,
-#         "HOLDING_REGISTER" : 3,
-#         "START_REGISTER" : 6000,
-#         "BYTES_TO_READ" : 1,
-#         "HEX_INPUT_STRING" : b'\x02\x03\x00\x00\x00\x01\x84\x39',
-#         "PARAMS_LIST" : ["O2"],
-#         "OUT_TYPE" : DATA_TYPE[2]
-#     }
-#     
-#     generateInputString(DEVICE_3)
+    DEVICE_1 = {
+    "MAC_ID" : "MACABCXX0001",
+    "PROTOCOL" : "MODBUS",
+    "SLAVE_ID" : 1,
+    "HOLDING_REGISTER" : 3,
+    "START_REGISTER" : 85,
+    "BYTES_TO_READ" : 2,
+    "HEX_INPUT_STRING" : b'\x01\x03\x00\x55\x00\x02\xD4\x1B',
+    "PARAMS_LIST" : ["NO"],
+    "OUT_TYPE" : DATA_TYPE[2]
+}
+     
+    generateInputString(DEVICE_1)
 
-    val = "79d33e44"
-    print(getConvertedData(val, DATA_TYPE[1]))
-    print(getConvertedData(val, DATA_TYPE[2]))
-    print(getConvertedData(val, DATA_TYPE[3]))
-    print(getConvertedData(val, DATA_TYPE[4]))
+#     val = "79d33e44"
+#     print(getConvertedData(val, DATA_TYPE[1]))
+#     print(getConvertedData(val, DATA_TYPE[2]))
+#     print(getConvertedData(val, DATA_TYPE[3]))
+#     print(getConvertedData(val, DATA_TYPE[4]))
 
