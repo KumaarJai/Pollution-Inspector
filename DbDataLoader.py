@@ -44,7 +44,8 @@ def initiateDataLoad():
             print(load_sql)
             uploadedFlag = tsv_to_mysql(load_sql, host, user, password)
             if(uploadedFlag > 0):
-                deleteFile(file)
+                #deleteFile(file)
+                print('deleting file'+file)
             load_sql=""
     else:
         print('readyFileList is empty, retrying in 10 seconds...')
@@ -60,7 +61,7 @@ def getReadyToUploadFiles():
         seperator_position = fileName.index('_')
         file_extention_position = fileName.index('.')
         current_file_date = fileName[seperator_position+1:file_extention_position]      # 2019-01-30#17-28
-        last_valid_timestamp = (datetime.now() - timedelta(minutes=30)).strftime(datetimeFormat) 
+        last_valid_timestamp = (datetime.now() - timedelta(minutes=2)).strftime(datetimeFormat) 
         print(current_file_date, last_valid_timestamp) 
         
         if datetime.strptime(current_file_date, datetimeFormat) <= datetime.strptime(last_valid_timestamp, datetimeFormat):
