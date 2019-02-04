@@ -5,7 +5,7 @@ Created on Jan 15, 2019
 
 import logging as LOGGER
 import sys
- 
+
 from modbusInterface import configuration as CONF
 from modbusInterface import dektosExternalPackageInstaller as DEKTOS_INSTALLER
 from modbusInterface import util as UTIL
@@ -26,7 +26,7 @@ LOGGER.debug('Log file initiated, System starting up...')
 
 try:
     LOGGER.info('Installing external python packages required to run this application..')
-    #DEKTOS_INSTALLER.installMandatoryPackages()
+    DEKTOS_INSTALLER.installMandatoryPackages()
     LOGGER.info('Installation complete. System started successfully')
 except Exception as e:
     LOGGER.info('Installation Failed. System will exit...')
@@ -102,7 +102,8 @@ def readModbusData(ser, device, targetFile):
     outData = []
     LOGGER.info(device["MAC_ID"]+ ' Requesting : '+ str(device["HEX_INPUT_STRING"]))
     #targetFile.write(device["MAC_ID"]+ ' Requesting : '+ str(device["HEX_INPUT_STRING"]))
-    ser.write(device["HEX_INPUT_STRING"])
+    #ser.write(device["HEX_INPUT_STRING"])
+    ser.write(UTIL.generateInputString(device))
     out = ser.readline()
     for byte in out:
         outData.append(byte)

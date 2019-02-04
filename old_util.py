@@ -1,4 +1,9 @@
 '''
+Created on Feb 4, 2019
+@author: Ajay_Rabidas
+'''
+
+'''
 Created on Feb 2, 2019
 Utility module
 @author: Kumaar Jai
@@ -46,41 +51,38 @@ def hexToFloat(s):
     return fp.contents.value         # dereference the pointer, get the float
 
 
-def handleByteAbove255(val):
-    if len(val) < 4:
-        val = '0'+val
-    return val
-
-
 
 def generateInputString(device):
-    slaveId= format(device["SLAVE_ID"],'#04x').replace('0x','')
-    holdingRegister= format(device["HOLDING_REGISTER"],'#04x').replace('0x','')
+    slaveId= format(device["SLAVE_ID"],'#04x').replace('0x','\\x')
+    holdingRegister= format(device["HOLDING_REGISTER"],'#04x').replace('0x','\\x')
     start = ''
     bytesToRead = ''
     if device["START_REGISTER"] > 255:
         start = handleByteAbove255(format(device["START_REGISTER"],'#04x').replace('0x',''))
     else:
-        start = start + '00' + format(device["START_REGISTER"],'#04x').replace('0x','')
+        start = start + format(0,'#04x').replace('0x','\\x') + format(device["START_REGISTER"],'#04x').replace('0x','\\x')
     
     
     if device["BYTES_TO_READ"] > 255:
         bytesToRead = handleByteAbove255(format(device["BYTES_TO_READ"],'#04x').replace('0x',''))
     else:
-        bytesToRead = bytesToRead + '00' + format(device["BYTES_TO_READ"],'#04x').replace('0x','')
+        bytesToRead = bytesToRead + format(0,'#04x').replace('0x','\\x') + format(device["BYTES_TO_READ"],'#04x').replace('0x','\\x')
     
     
     final_input_string = slaveId + holdingRegister + start + bytesToRead
-    
-    #Testing functionality
-    print(bytes.fromhex(final_input_string), bytes.fromhex(final_input_string) == '\x01\x03\x00\x55\x00\x02'.encode())
-    print('\x01\x03\x00\x55\x00\x02'.encode(), bytes.fromhex(final_input_string).decode('utf-8') == '\x01\x03\x00\x55\x00\x02')
-    
-    return bytes.fromhex(final_input_string)
+    print(final_input_string.encode())
+    return final_input_string.encode()
 
 
 
 
+def handleByteAbove255(val):
+    s=''
+    if len(val) < 4:
+        s = '\\x0'+val[0:1] +'\\x'+val[1:3]
+    elif len(val) == 4:
+        s = '\\x'+val[0:2] + '\\x'+val[2:4]
+    return s
 
 
 if __name__ == '__main__':
@@ -105,3 +107,7 @@ if __name__ == '__main__':
 #     print(getConvertedData(val, DATA_TYPE[3]))
 #     print(getConvertedData(val, DATA_TYPE[4]))
 
+
+
+if __name__ == '__main__':
+    pass

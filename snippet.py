@@ -67,27 +67,28 @@ def trial():
     print(val_arr)
 
 
+def restapi():
+    import requests
+    url = 'https://jsonplaceholder.typicode.com/posts'
+    data = {  "title": "AKR",    "body": "bar",   "userId": 1007   }
+
+    response = requests.post(url, data=data)
+    print(response, response.content)
+
 
 if __name__ == '__main__':
+    restapi()
+#     from PyCRC.CRC16 import CRC16
+#     a = b'\x02\x03\x00\x00\x00\x01' #\x84\x39
+#     x = b'\x01\x03\x00\x55\x00\x02' #\xD4\x1B
+#     y = b'\x01\x03\x00\x00\x00\x02' #\xD4\x1B
+#     print(hex(CRC16().calculate(y)))
+#     print(format(CRC16().calculate(x),'#04x') )
+#     
+#     input = b'\x05d\x05\xc0\x00\x01\x00\x0c'
+#     print(CRC16().calculate(input))
+#     print(bytearray.fromhex('030900'))
     
-    #import requests
     
-    from PyCRC.CRC16 import CRC16
-    a = b'\x02\x03\x00\x00\x00\x01' #\x84\x39
     
-    x2= format(6000,'#04x').replace('0x','')
-    x1= format(0,'#04x').replace('0x','\\x')
-    x1= format(0,'#04x').replace('0x','\\x')
-    x1= format(0,'#04x').replace('0x','\\x')
-    bb= format(0,'#04x').replace('0x','\\x') + format(2,'#04x').replace('0x','\\x')
     
-    print(len(x2), x2)
-    s=''
-    if len(x2) < 4:
-        s = '\\x0'+x2[0:1] +'\\x'+x2[1:3]
-    elif len(x2) == 4:
-        s = '\\x'+x2[0:2] + '\\x'+x2[2:4]
-    print(s) 
-#     print(CRC16().calculate(a))
-#     print(int("8439",16))
-#     print(int("8836",16))

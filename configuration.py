@@ -28,7 +28,7 @@ DB_USER = 'cdotsmasterdba'
 DB_PASSWORD = 'master.cdots'
 
  
- #DATA_TYPES
+#DATA_TYPES
 DATA_TYPE = ["INTEGER", "BIG_I", "LITTLE_I", "MID_BIG_I", "MID_LITTLE_I"]
  
 #DEVICE Details ----------------------------------------------:
