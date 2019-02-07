@@ -5,7 +5,8 @@ Utility module
 '''
 from ctypes import cast, pointer, c_int, c_float, POINTER
 from modbusInterface import configuration as CONF
-
+from modbusInterface import dektosCRC
+from builtins import str
 DATA_TYPE = CONF.DATA_TYPE
 
 
@@ -69,13 +70,13 @@ def generateInputString(device):
     else:
         bytesToRead = bytesToRead + '00' + format(device["BYTES_TO_READ"],'#04x').replace('0x','')
     
+    interimn_input_string = slaveId + holdingRegister + start + bytesToRead
+    final_input_string = interimn_input_string + dektosCRC.CRC16_BIG_INDIAN(bytes.fromhex(interimn_input_string).decode('utf-8'))
     
-    final_input_string = slaveId + holdingRegister + start + bytesToRead
     
-    #Testing functionality
-    print(bytes.fromhex(final_input_string), bytes.fromhex(final_input_string) == '\x01\x03\x00\x55\x00\x02'.encode())
-    print('\x01\x03\x00\x55\x00\x02'.encode(), bytes.fromhex(final_input_string).decode('utf-8') == '\x01\x03\x00\x55\x00\x02')
-    
+#    Testing functionality
+    print(final_input_string, bytes.fromhex(final_input_string), bytes.fromhex(final_input_string).decode('latin-1') == device["HEX_INPUT_STRING"])
+#    print(device["HEX_INPUT_STRING"], bytes.fromhex(final_input_string).decode('latin-1') == device["HEX_INPUT_STRING"])
     return bytes.fromhex(final_input_string)
 
 
@@ -84,20 +85,33 @@ def generateInputString(device):
 
 
 if __name__ == '__main__':
-    DEVICE_1 = {
+    DEVICE_2 = {
     "MAC_ID" : "MACABCXX0001",
     "PROTOCOL" : "MODBUS",
     "SLAVE_ID" : 1,
     "HOLDING_REGISTER" : 3,
     "START_REGISTER" : 85,
     "BYTES_TO_READ" : 2,
-    "HEX_INPUT_STRING" : b'\x01\x03\x00\x55\x00\x02\xD4\x1B',
+    "HEX_INPUT_STRING" : '\x01\x03\x00\x55\x00\x02\xD4\x1B',
     "PARAMS_LIST" : ["NO"],
     "OUT_TYPE" : DATA_TYPE[2]
     }
     
-    #print(format(805,'#04x').replace('0x',''))
+    DEVICE_1 = {
+    "MAC_ID" : "MACABCXX0001",
+    "PROTOCOL" : "MODBUS",
+    "SLAVE_ID" : 2,
+    "HOLDING_REGISTER" : 3,
+    "START_REGISTER" : 0,
+    "BYTES_TO_READ" : 1,
+    "HEX_INPUT_STRING" : '\x02\x03\x00\x00\x00\x01\x84\x39',
+    "PARAMS_LIST" : ["NO"],
+    "OUT_TYPE" : DATA_TYPE[2]
+    }
+
     generateInputString(DEVICE_1)
+    generateInputString(DEVICE_2)
+    #print(dektosCRC.CRC16_BIG_INDIAN(d))
 
 #     val = "79d33e44"
 #     print(getConvertedData(val, DATA_TYPE[1]))

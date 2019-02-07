@@ -13,7 +13,6 @@ def installPackage(package):
 
 def installMandatoryPackages():
     installPackage('pyserial')
-    installPackage('PyCRC')
     installPackage('pymysql')
 
 if __name__ == '__main__':

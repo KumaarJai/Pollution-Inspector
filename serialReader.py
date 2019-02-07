@@ -47,7 +47,7 @@ def getMacId():
     return ':'.join(re.findall('..', '%012x' % uuid.getnode()))
 
 
-def connectToDevice():
+def connectToDevice(mode):
     try:
         #ser = ''
         ser = serial.Serial(CONF.PORT, CONF.BAUD_RATE,timeout=CONF.TIMEOUT)
@@ -91,6 +91,9 @@ def connectToDevice():
         exit()
 
 
+def readSerialData(ser, targetFile):
+    
+    print()
 
 
 def readModbusData(ser, device, targetFile):
@@ -106,9 +109,6 @@ def readModbusData(ser, device, targetFile):
     if outData !=[]:
         if isOutputAligned(device, outData):
             extractData(device, outData, targetFile)
-
-
-
 
 
 
@@ -171,6 +171,6 @@ def readDummyData(ser, device, targetFile):
 
 
 if __name__ == '__main__':
-    connectToDevice()
+    connectToDevice('SERIAL')
     
     
