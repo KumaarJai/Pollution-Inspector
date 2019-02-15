@@ -76,11 +76,15 @@ def connectToDevice(mode):
             elif next_time == 0:
                 next_time = datetime.now() + timedelta(seconds=30) 
                 
+            if mode == 'SERIAL':
+                print('Initiating serial read...')
+                readSerialData(serialData = ser.readLine(), f)
                 
-            for i in range(0, len(CONF.DEVICE_LIST)):
-                device = CONF.DEVICE_LIST[i]
-                readModbusData(ser, device, f)
-                #readDummyData(ser, device, f)
+            elif mode == 'MODBUS':        
+                for i in range(0, len(CONF.DEVICE_LIST)):
+                    device = CONF.DEVICE_LIST[i]
+                    readModbusData(ser, device, f)
+                    #readDummyData(ser, device, f)
             
             LOGGER.info('\n initiating next cycle')
             LOGGER.info('_____________________________________________________________________________\n')
@@ -91,9 +95,16 @@ def connectToDevice(mode):
         exit()
 
 
-def readSerialData(ser, targetFile):
+
+def readSerialData(out, targetFile):
+    outData = []
+    for byte in out:
+        outData.append(byte)
     
-    print()
+    if outData !=[]:
+        if isOutputAligned(outData):
+            extractData(CONF.DEVICE_LIST[0], outData, targetFile)
+
 
 
 def readModbusData(ser, device, targetFile):
@@ -171,6 +182,6 @@ def readDummyData(ser, device, targetFile):
 
 
 if __name__ == '__main__':
-    connectToDevice('SERIAL')
+    connectToDevice(CONF.PROTOCOL)
     
     

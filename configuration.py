@@ -16,6 +16,8 @@ BAUD_RATE=57600
 BIT_RATE=2
 TIMEOUT=5
 DATA_BYTES_START_INDEX = 3
+PROTOCOL = "SERIAL"
+
 
 #CLIENT Details ----------------------------------------------:
 CLIENT_NAME='CLIENTXX_001'
