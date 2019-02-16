@@ -73,7 +73,6 @@ def generateInputString(device):
     interimn_input_string = slaveId + holdingRegister + start + bytesToRead
     final_input_string = interimn_input_string + dektosCRC.CRC16_BIG_INDIAN(bytes.fromhex(interimn_input_string).decode('utf-8'))
     
-    
 #    Testing functionality
 #    print(final_input_string, bytes.fromhex(final_input_string), bytes.fromhex(final_input_string).decode('latin-1') == device["HEX_INPUT_STRING"])
 #    print(device["HEX_INPUT_STRING"], bytes.fromhex(final_input_string).decode('latin-1') == device["HEX_INPUT_STRING"])
@@ -81,8 +80,21 @@ def generateInputString(device):
 
 
 
+def verifyOutCRC(out, outCRC):
+    outStr = getStringFromList(out)
+    oCRC = getStringFromList(outCRC)
+    myCRC = dektosCRC.CRC16_BIG_INDIAN(bytes.fromhex(outStr).decode('latin-1'))
+    print('My CRC -- ', myCRC, ', CRC from modbus --', oCRC)
+    if myCRC == oCRC:
+        return True
+    else:
+        return False
 
-
+def getStringFromList(lis):
+    outStr = ''
+    for item in lis:
+        outStr+=format(item,'#04x').replace('0x','') 
+    return outStr
 
 if __name__ == '__main__':
     DEVICE_2 = {

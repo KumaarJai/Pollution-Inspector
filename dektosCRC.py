@@ -98,8 +98,8 @@ if __name__ == '__main__':
     y = b'\x01\x03\x00\x00\x00\x02' #\xD4\x1B
 
     #b'\x30\x03\x10\x00\x00\x06\x84\x39',
-    m ='300310000006'
-    print(m, CRC16_BIG_INDIAN(bytes.fromhex(m).decode('utf-8')),  CRC16_BIG_INDIAN(m)) 
+    m ='483120000641451271630000'
+    print(m, CRC16_BIG_INDIAN(bytes.fromhex(m).decode('utf-8'))) 
 #     print(x3)
 #     x4 = x3[0:-2]
 #     for bytes in x3:
