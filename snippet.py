@@ -77,9 +77,13 @@ def restapi():
 
 
 if __name__ == '__main__':
-    import libscrc
+    import os
+    x = "/".join(os.getcwd().split('\\')[0:-1])
+    print(x)
+    
+#     import libscrc
 #     restapi()
-    from PyCRC.CRC16 import CRC16
+#     from PyCRC.CRC16 import CRC16
 #     print(hex(CRC16().calculate(y)))
 #     print(format(CRC16().calculate(x),'#04x') )
 #      
@@ -87,15 +91,15 @@ if __name__ == '__main__':
 #     print(CRC16().calculate(input))
 #     print(bytearray.fromhex('030900'))
 #     
-    a = b'\x02\x03\x00\x00\x00\x01' #\x84\x39
-    x = b'\x02\x03\x02\x02\x52' #\x7c\xd9
-    y = b'\x01\x03\x00\x00\x00\x02' #\xD4\x1B
-
-    crc16 = libscrc.modbus(a)  # Calculate HEX of modbus
-    crc16x = libscrc.modbus(x)  # Calculate HEX of modbus
-    print(crc16, crc16x)
-    
-    print(CRC16().calculate(a), CRC16().calculate(x))
+#     a = b'\x02\x03\x00\x00\x00\x01' #\x84\x39
+#     x = b'\x02\x03\x02\x02\x52' #\x7c\xd9
+#     y = b'\x01\x03\x00\x00\x00\x02' #\xD4\x1B
+# 
+#     crc16 = libscrc.modbus(a)  # Calculate HEX of modbus
+#     crc16x = libscrc.modbus(x)  # Calculate HEX of modbus
+#     print(crc16, crc16x)
+#     
+#     print(CRC16().calculate(a), CRC16().calculate(x))
 
 
     

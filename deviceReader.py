@@ -4,9 +4,10 @@ Created on Jan 15, 2019
 '''
 
 import logging as LOGGER
+import os
 import sys
-sys.path.append('C:/Users/psingh06/Desktop/AKR/')
-
+#sys.path.append('C:/Users/psingh06/Desktop/AKR/')
+sys.path.append("/".join(os.getcwd().split('\\')[0:-1]))
 from modbusInterface import configuration as CONF
 from modbusInterface import dektosExternalPackageInstaller as DEKTOS_INSTALLER
 from modbusInterface import util as UTIL

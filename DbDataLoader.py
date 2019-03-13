@@ -3,8 +3,10 @@ Created on Jan 30, 2019
 @author: Ajay_Rabidas
 '''
 import logging as LOGGER
+import os
 import sys
-sys.path.append('C:/Users/psingh06/Desktop/AKR/')
+#sys.path.append('C:/Users/psingh06/Desktop/AKR/')
+sys.path.append("/".join(os.getcwd().split('\\')[0:-1]))
 
 from modbusInterface import configuration as CONF
 import pymysql
