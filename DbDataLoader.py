@@ -10,12 +10,11 @@ sys.path.append("/".join(os.getcwd().split('\\')[0:-1]))
 
 from modbusInterface import configuration as CONF
 import pymysql
-import os
 import shutil
 from datetime import datetime, timedelta
 
 
-LOG_FILENAME = CONF.BASE_PATH+'log/dbUpload.log'
+LOG_FILENAME = CONF.LOG_DB_DATA_LOADER
 #LOGGER.basicConfig(filename=LOG_FILENAME,level=LOGGER.DEBUG)
 
 LOGGER.basicConfig(

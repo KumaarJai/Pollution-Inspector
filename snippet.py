@@ -75,11 +75,30 @@ def restapi():
     response = requests.post(url, data=data)
     print(response, response.content)
 
+def generateDirectorySturcture():
+    from modbusInterface import configuration as CONF
+    try:
+        print("Creating Archive path : "+ CONF.ARCHIVE_PATH)
+        os.makedirs(CONF.ARCHIVE_PATH, exist_ok=True)
+        
+        print("Creating Output path : "+ CONF.ARCHIVE_PATH)
+        os.makedirs(CONF.OUTPUT_PATH, exist_ok=True)
+        
+        print("Creating Log path : "+ CONF.ARCHIVE_PATH)
+        os.makedirs(CONF.LOG_PATH, exist_ok=True)
+        
+    except Exception as e:
+        print('Error generating directory structure, Please retry...')
+        print(e)
+        exit()
+    else:
+        print("Directory structure successfully generated...")
 
 if __name__ == '__main__':
     import os
-    x = "/".join(os.getcwd().split('\\')[0:-1])
-    print(x)
+    generateDirectorySturcture()
+#     path = "/".join(os.getcwd().split('\\')[0:-1])
+#     print(path)
     
 #     import libscrc
 #     restapi()

@@ -5,10 +5,14 @@ Config file uniquely generated for each client
 '''
 
 #Host File System details
-#BASE_PATH = 'G:\\work\\vasthi\\vasthi_pydev\\logs\\'
-BASE_PATH = 'C:/Users/psingh06/Desktop/AKR/dektos/'
+#BASE_PATH = 'D:/AJAY_545732/PROJECTS/Dektos/APPDATA/'
+BASE_PATH = 'D:/AJAY_545732/PROJECTS/Dektos/APPDATA/'
 OUTPUT_PATH = BASE_PATH+'output/'
 ARCHIVE_PATH = BASE_PATH+'archived/'
+LOG_PATH = BASE_PATH+'log/'
+
+LOG_DEVICE_READER = LOG_PATH+'/dektos'  #absolute log file name for deviceReader.py
+LOG_DB_DATA_LOADER = LOG_PATH+'/dbUpload'     #absolute log file name for DbDataLoader.py
 
 #Device Serial Port Connectivity Details ----------------------------------------------:
 PORT='COM7'

@@ -96,6 +96,10 @@ def getStringFromList(lis):
         outStr+=format(item,'#04x').replace('0x','') 
     return outStr
 
+
+
+
+
 if __name__ == '__main__':
     DEVICE_2 = {
     "MAC_ID" : "MACABCXX0001",

@@ -12,10 +12,8 @@ from modbusInterface import configuration as CONF
 from modbusInterface import dektosExternalPackageInstaller as DEKTOS_INSTALLER
 from modbusInterface import util as UTIL
 
+LOG_FILENAME = CONF.LOG_DEVICE_READER
 
-
-LOG_FILENAME = CONF.BASE_PATH+'log/dektos.log'
-#LOGGER.basicConfig(filename=LOG_FILENAME,level=LOGGER.DEBUG)
 
 LOGGER.basicConfig(
     level=LOGGER.INFO,
@@ -37,6 +35,7 @@ except Exception as e:
     LOGGER.exception(e)
     sys.exit(1)
 
+#------------------------------------------------------------------------------------------------------------------------------
 
 import serial
 import re, uuid 
@@ -46,15 +45,36 @@ from datetime import datetime
 from datetime import timedelta
 #from PyCRC.CRC16 import CRC16
 
-globalErrorCounter = 0
+
 
 def getMacId():
     return ':'.join(re.findall('..', '%012x' % uuid.getnode()))
 
 
-def connectToDevice(mode):
+
+def generateDirectorySturcture():
     try:
-        #ser = ''
+        print("Creating Archive path : "+ CONF.ARCHIVE_PATH)
+        os.makedirs(CONF.ARCHIVE_PATH, exist_ok=True)
+        
+        print("Creating Output path : "+ CONF.ARCHIVE_PATH)
+        os.makedirs(CONF.OUTPUT_PATH, exist_ok=True)
+        
+        print("Creating Log path : "+ CONF.ARCHIVE_PATH)
+        os.makedirs(CONF.LOG_PATH, exist_ok=True)
+        
+    except Exception as e:
+        LOGGER.info('Error generating directory structure, Please retry...')
+        LOGGER.exception(e)
+        exit()
+    else:
+        LOGGER.info("Directory structure successfully generated...")
+
+
+
+def connectToDevice(mode):
+    LOGGER.info('Connecting to device. PROTOCOL : '+mode)
+    try:
         ser = serial.Serial(CONF.PORT, CONF.BAUD_RATE,timeout=CONF.TIMEOUT)
         if(ser.isOpen()):
             LOGGER.info(ser.name + ' is open--------------------------------------------')
@@ -131,6 +151,7 @@ def readSerialData(out, targetFile):
 
 
 
+
 def readModbusData(ser, device, targetFile):
     outData = []   
     errC = 0 
@@ -165,6 +186,7 @@ def readModbusData(ser, device, targetFile):
 
 
 
+
 def extractData(device, outData, targetFile):
     LOGGER.info('Extracting data..............')
     #print(outData)
@@ -196,6 +218,7 @@ def extractData(device, outData, targetFile):
     paramMapJSON = json.dumps(outputParamMap)
     writetoFile(paramMapJSON, targetFile) 
     
+
     
 def writetoFile(paramMapJSON, targetFile):
     csvWriter = csv.writer(targetFile, delimiter='\t', lineterminator='\n', quoting=csv.QUOTE_NONE, quotechar='' )
@@ -203,6 +226,7 @@ def writetoFile(paramMapJSON, targetFile):
     #time.sleep(2)
     #targetFile.close()
     
+
 
 def isOutputAligned(device, outData, out):
     #[48, 3, 12, 63, 87, 126, 50, 64, 13, 77, 223, 0, 0, 0, 0, 65, 4]
@@ -226,9 +250,8 @@ def readDummyData(ser, device, targetFile):
 
 
 
-
-
 if __name__ == '__main__':
-    connectToDevice(CONF.PROTOCOL)
+    generateDirectorySturcture()
+    #connectToDevice(CONF.PROTOCOL)
     
     
