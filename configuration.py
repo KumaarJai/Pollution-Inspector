@@ -33,7 +33,24 @@ DB_PASSWORD = 'master.cdots'
 #DATA_TYPES : Do Not Touch
 DATA_TYPE = ["INTEGER", "BIG_I", "LITTLE_I", "MID_BIG_I", "MID_LITTLE_I"]
  
-#DEVICE Details in Decimal----------------------------------------------:
+ 
+ 
+ 
+ 
+ 
+#SERIAL DEVICE Details in Decimal (Only 1 serial device per config file)----------------------------------------------:
+SERIAL_DEVICE = {
+    "STACK_NAME" : "SER_1",
+    "PARAMS_LIST" : ["NO","SO2","CD"],
+    "PARAMS_SERIAL_POS" : [0,2,3],
+    "ERROR_COUNT" : 0
+}
+ 
+ 
+ 
+ 
+ 
+#MODBUS DEVICE Details in Decimal----------------------------------------------:
 DEVICE_1 = {
     "STACK_NAME" : "PODR_1",
     "SLAVE_ID" : 1,
@@ -78,7 +95,10 @@ DEVICE_4 = {
     "ERROR_COUNT" : 0
 }
 
+
 #DEVICE_LIST = [DEVICE_1, DEVICE_2, DEVICE_3] 
 DEVICE_LIST = [DEVICE_1, DEVICE_2] 
+
+
 
 

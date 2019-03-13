@@ -102,15 +102,31 @@ def connectToDevice(mode):
 
 
 def readSerialData(out, targetFile):
+    device = CONF.SERIAL_DEVICE
+    errC = device["ERROR_COUNT"]
+    LOGGER.info(device["STACK_NAME"]+' error count : '+str(errC))
     outData = []
+    outputParamMap = {}
+    SERIAL_PARAMS_LIST = device["PARAMS_LIST"]
+    SERIAL_PARAMS_INDEX = device["PARAMS_SERIAL_POS"]
     for byte in out:
         outData.append(byte)
     
+    if outData == []:
+        if errC >=3:
+            LOGGER.info('\n\n send error data to server...........')
+            errC = 0
+        elif errC < 3:
+            errC = errC +1
+        CONF.SERIAL_DEVICE["ERROR_COUNT"] = errC   
+        
     if outData !=[]:
-        if isOutputAligned(outData):
-            extractData(CONF.DEVICE_LIST[0], outData, targetFile)
-        else:
-            LOGGER.info('CRC mismatch... send error to server')
+        for i in range(0, len(SERIAL_PARAMS_LIST)):
+            outputParamMap[str(SERIAL_PARAMS_LIST[i])] = outData[SERIAL_PARAMS_INDEX[i]]
+        paramMapJSON = json.dumps(outputParamMap)
+        writetoFile(paramMapJSON, targetFile) 
+    else:
+        LOGGER.info('Cannot read to device data... send error to server')
 
 
 
