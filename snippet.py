@@ -10,7 +10,7 @@ from ctypes import *
 import struct
 from PyCRC.CRC16 import CRC16
 from serial.tools.hexlify_codec import hex_decode
-
+import os
 def a():
     c = time.strptime("2002-03-14 17:12:00", "%Y-%m-%d %H:%M:%S")
     t = time.mktime(c)
@@ -95,8 +95,16 @@ def generateDirectorySturcture():
         print("Directory structure successfully generated...")
 
 if __name__ == '__main__':
-    import os
-    generateDirectorySturcture()
+    
+    outData = []
+    count =0
+    out = b''
+    
+    outData = [x for x in out.decode(encoding='UTF-8').split(',')]
+    outData.pop(0)
+    print(outData)
+#     import os
+#     generateDirectorySturcture()
 #     path = "/".join(os.getcwd().split('\\')[0:-1])
 #     print(path)
     

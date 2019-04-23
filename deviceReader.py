@@ -126,12 +126,15 @@ def readSerialData(out, targetFile):
     device = CONF.SERIAL_DEVICE
     errC = device["ERROR_COUNT"]
     LOGGER.info(device["STACK_NAME"]+' error count : '+str(errC))
-    outData = []
+#    outData = []
     outputParamMap = {}
     SERIAL_PARAMS_LIST = device["PARAMS_LIST"]
     SERIAL_PARAMS_INDEX = device["PARAMS_SERIAL_POS"]
-    for byte in out:
-        outData.append(byte)
+    
+    outData = [x for x in out.decode(encoding='UTF-8').split(',')]
+    outData.pop(0)
+#     for byte in out:
+#         outData.append(byte)
     
     if outData == []:
         if errC >=3:
