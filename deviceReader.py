@@ -125,7 +125,7 @@ def connectToDevice(mode):
 def readSerialData(out, targetFile):
     device = CONF.SERIAL_DEVICE
     errC = device["ERROR_COUNT"]
-    LOGGER.info(device["STACK_NAME"]+' error count : '+str(errC))
+    LOGGER.info(device["DEVICE_ID"]+' error count : '+str(errC))
 #    outData = []
     outputParamMap = {}
     SERIAL_PARAMS_LIST = device["PARAMS_LIST"]
@@ -149,6 +149,7 @@ def readSerialData(out, targetFile):
             outputParamMap[str(SERIAL_PARAMS_LIST[i])] = outData[SERIAL_PARAMS_INDEX[i]]
         paramMapJSON = json.dumps(outputParamMap)
         writetoFile(paramMapJSON, targetFile) 
+        uploadToCPCB(paramMapJSON, device)
     else:
         LOGGER.info('Cannot read to device data... send error to server')
 
@@ -157,11 +158,11 @@ def readSerialData(out, targetFile):
 
 def readModbusData(ser, device, targetFile):
     outData = []   
-    errC = 0 
+    #errC = 0 
     errC = device["ERROR_COUNT"]
-    LOGGER.info(device["STACK_NAME"]+' error count : '+str(errC))
+    LOGGER.info(device["DEVICE_ID"]+' error count : '+str(errC))
     inputString = UTIL.generateInputString(device)
-    LOGGER.info(device["STACK_NAME"]+ ' Requesting : '+ str(inputString))
+    LOGGER.info(device["DEVICE_ID"]+ ' Requesting : '+ str(inputString))
     #LOGGER.info(str(device["HEX_INPUT_STRING"]))    #just for testing the correctness of input string
     ser.write(inputString)
     out = ser.readline()
@@ -217,9 +218,11 @@ def extractData(device, outData, targetFile):
         count = count+1
         start = start + bytesPerParam
         end = end +bytesPerParam
-        
+            
     paramMapJSON = json.dumps(outputParamMap)
+    
     writetoFile(paramMapJSON, targetFile) 
+    uploadToCPCB(paramMapJSON, device)
     
 
     
@@ -228,7 +231,37 @@ def writetoFile(paramMapJSON, targetFile):
     csvWriter.writerow([getMacId(), paramMapJSON, datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
     #time.sleep(2)
     #targetFile.close()
-    
+
+
+
+def uploadToCPCB(paramMapJSON, device):
+    paramList = device["PARAMS_LIST"]
+    unitList = device["PARAMS_UNIT"]
+    diagnosticList = device["DIAGNOSTIC_PARAMS"]
+    cpcbMap = {}
+    params = []
+    diagnostics = []
+    #paramData = {}
+    cpcbMap["deviceId"] = device["DEVICE_ID"]
+    for i in range(0, len(paramList)):
+        params.append({
+                "parameter" : paramList[i],
+                "value" : paramMapJSON[paramList[i]],
+                "unit" : unitList[i],
+                "timestamp" : UTIL.getUnixTime(),
+                "flag" : device["FLAG"]
+            })
+    for d in range(0, len(diagnosticList)):
+        diagnostics.append({
+                "diagParam" : diagnosticList[d],
+                "value" : 0,
+                "timestamp" : UTIL.getUnixTime()
+            })
+    cpcbMap["params"] = params
+    cpcbMap["diagnostics"] = diagnostics
+    #print(json.dumps(cpcbMap))
+    UTIL.call_CPCB_API(CONF.INDUSTRY_ID, device["STATION_ID"], json.dumps(cpcbMap))
+
 
 
 def isOutputAligned(device, outData, out):
@@ -246,15 +279,15 @@ def isOutputAligned(device, outData, out):
 
 
 #Demo purpose only
-def readDummyData(ser, device, targetFile):
-    outData = [2,3,6,2,52,33,52,22,22,1,1]
-    extractData(device, outData, targetFile)
+# def readDummyData(ser, device, targetFile):
+#     outData = [2,3,6,2,52,33,52,22,22,1,1]
+#     extractData(device, outData, targetFile)
 
 
 
 
 if __name__ == '__main__':
     generateDirectorySturcture()
-    #connectToDevice(CONF.PROTOCOL)
-    
+    connectToDevice(CONF.PROTOCOL)
+
     

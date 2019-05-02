@@ -11,6 +11,7 @@ import struct
 from PyCRC.CRC16 import CRC16
 from serial.tools.hexlify_codec import hex_decode
 import os
+import modbusInterface
 def a():
     c = time.strptime("2002-03-14 17:12:00", "%Y-%m-%d %H:%M:%S")
     t = time.mktime(c)
@@ -75,6 +76,7 @@ def restapi():
     response = requests.post(url, data=data)
     print(response, response.content)
 
+
 def generateDirectorySturcture():
     from modbusInterface import configuration as CONF
     try:
@@ -94,15 +96,64 @@ def generateDirectorySturcture():
     else:
         print("Directory structure successfully generated...")
 
+def uploadToCPCB(paramMapJSON, device):
+    paramList = device["PARAMS_LIST"]
+    unitList = device["PARAMS_UNIT"]
+    diagnosticList = device["DIAGNOSTIC_PARAMS"]
+    cpcbMap = {}
+    params = []
+    diagnostics = []
+    #paramData = {}
+    cpcbMap["deviceId"] = device["DEVICE_ID"]
+    for i in range(0, len(paramList)):
+        params.append({
+                "parameter" : paramList[i],
+                "value" : paramMapJSON[paramList[i]],
+                "unit" : unitList[i],
+                "timestamp" : UTIL.getUnixTime(),
+                "flag" : device["FLAG"]
+            })
+    for d in range(0, len(diagnosticList)):
+        diagnostics.append({
+                "diagParam" : diagnosticList[d],
+                "value" : 0,
+                "timestamp" : UTIL.getUnixTime()
+            })
+    cpcbMap["params"] = params
+    cpcbMap["diagnostics"] = diagnostics
+    print(json.dumps(cpcbMap))
+    UTIL.call_CPCB_API(CONF.INDUSTRY_ID, device["STATION_ID"], json.dumps(cpcbMap))
+    
+    
 if __name__ == '__main__':
-    
-    outData = []
-    count =0
-    out = b''
-    
-    outData = [x for x in out.decode(encoding='UTF-8').split(',')]
-    outData.pop(0)
-    print(outData)
+    import json
+    from modbusInterface import configuration as CONF
+    from modbusInterface import util as UTIL  
+#     url = CONF.CPCB_API_ENDPOINT + '/industry/{}/station/{}/data'.format(5, '25k')
+#     print(url)
+#     
+    paramMapJSON = {"NO":5, "SO2":45.3, "CD":555}
+    DEVICE_2 = {
+        "STATION_ID" : "PODR_2",
+        "DEVICE_ID" : "MOD_DEV_1",
+        "SLAVE_ID" : 48,
+        "HOLDING_REGISTER" : 3,
+        "START_REGISTER" : 4096,
+        "BYTES_TO_READ" : 6,
+        "PARAMS_LIST" : ["NO","SO2","CD"],
+        "PARAMS_UNIT" : ['Kg/m3','ppm','vol%'],
+        "FLAG" : "M",
+        "DIAGNOSTIC_PARAMS" : ["humidityAlert", "devTemperature"],
+        "ERROR_COUNT" : 0
+    }
+    uploadToCPCB(paramMapJSON, DEVICE_2)
+#     outData = []
+#     count =0
+#     out = b''
+#     
+#     outData = [x for x in out.decode(encoding='UTF-8').split(',')]
+#     outData.pop(0)
+#     print(outData==[])
 #     import os
 #     generateDirectorySturcture()
 #     path = "/".join(os.getcwd().split('\\')[0:-1])
@@ -128,7 +179,8 @@ if __name__ == '__main__':
 #     
 #     print(CRC16().calculate(a), CRC16().calculate(x))
 
-
+1441686170004
+1556769939842
     
     
     

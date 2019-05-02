@@ -24,8 +24,8 @@ PROTOCOL = "MODBUS"
 
 
 #CLIENT Details ----------------------------------------------:
-CLIENT_NAME='CLIENTXX_001'
-CLIENT_ID='CL_001'
+INDUSTRY_NAME='CLIENTXX_001'
+INDUSTRY_ID='CL_001'
 DATA_UPLOAD_INTERVAL = 30
 
 #DATABASE DETAILS : Do Not Touch
@@ -33,7 +33,11 @@ DB_HOST_URL = 'cdotsdb.cc0wiogqy5qv.ap-northeast-2.rds.amazonaws.com'
 DB_USER = 'cdotsmasterdba'
 DB_PASSWORD = 'master.cdots'
 
- 
+#CPCB Server Details
+CPCB_API_ENDPOINT = "http://localhost:5000"
+#CPCB_API_ENDPOINT = 'http://182.75.69.206:8080/v1.0'
+CPCB_ACCESS_TOKEN = 'ABCD1234'
+
 #DATA_TYPES : Do Not Touch
 DATA_TYPE = ["INTEGER", "BIG_I", "LITTLE_I", "MID_BIG_I", "MID_LITTLE_I"]
  
@@ -44,9 +48,13 @@ DATA_TYPE = ["INTEGER", "BIG_I", "LITTLE_I", "MID_BIG_I", "MID_LITTLE_I"]
  
 #SERIAL DEVICE Details in Decimal (Only 1 serial device per config file)----------------------------------------------:
 SERIAL_DEVICE = {
-    "STACK_NAME" : "SER_1",
+    "STATION_ID" : "SER_1",
+    "DEVICE_ID" : "SER_DEV_1",
     "PARAMS_LIST" : ["NO","SO2","CD"],
     "PARAMS_SERIAL_POS" : [0,2,3],
+    "PARAMS_UNIT" : ['Kg/m3','ppm','vol%'],
+    "FLAG" : "M",
+    "DIAGNOSTIC_PARAMS" : ["humidityAlert", "devTemperature"],
     "ERROR_COUNT" : 0
 }
  
@@ -56,46 +64,62 @@ SERIAL_DEVICE = {
  
 #MODBUS DEVICE Details in Decimal----------------------------------------------:
 DEVICE_1 = {
-    "STACK_NAME" : "PODR_1",
+    "STATION_ID" : "PODR_1",
+    "DEVICE_ID" : "MOD_DEV_1",
     "SLAVE_ID" : 1,
     "HOLDING_REGISTER" : 3,
     "START_REGISTER" : 85,
     "BYTES_TO_READ" : 2,
     "PARAMS_LIST" : ["NO"],
+    "PARAMS_UNIT" : ['ppm'],
     "OUT_TYPE" : DATA_TYPE[2],
+    "FLAG" : "M",                #"U|C|M|F|Z|D"
+    "DIAGNOSTIC_PARAMS" : ["humidityAlert"],
     "ERROR_COUNT" : 0
 }
 
 DEVICE_2 = {
-    "STACK_NAME" : "PODR_2",
+    "STATION_ID" : "PODR_2",
+    "DEVICE_ID" : "MOD_DEV_1",
     "SLAVE_ID" : 48,
     "HOLDING_REGISTER" : 3,
     "START_REGISTER" : 4096,
     "BYTES_TO_READ" : 6,
     "PARAMS_LIST" : ["NO","SO2","CD"],
+    "PARAMS_UNIT" : ['Kg/m3','ppm','vol%'],
     "OUT_TYPE" : DATA_TYPE[1],
+    "FLAG" : "M",
+    "DIAGNOSTIC_PARAMS" : ["humidityAlert", "devTemperature"],
     "ERROR_COUNT" : 0
 }
 
 DEVICE_3 = {
-    "STACK_NAME" : "PODR_3",
+    "STATION_ID" : "PODR_3",
+    "DEVICE_ID" : "MOD_DEV_1",
     "SLAVE_ID" : 2,
     "HOLDING_REGISTER" : 3,
     "START_REGISTER" : 0,
     "BYTES_TO_READ" : 1,
     "PARAMS_LIST" : ["O2"],
+    "PARAMS_UNIT" : ['ppm'],
     "OUT_TYPE" : DATA_TYPE[2],
+    "FLAG" : "M",
+    "DIAGNOSTIC_PARAMS" : ["devTemperature"],
     "ERROR_COUNT" : 0
 }
 
 DEVICE_4 = {
-    "STACK_NAME" : "PODR_1",
+    "STATION_ID" : "PODR_1",
+    "DEVICE_ID" : "MOD_DEV_1",
     "SLAVE_ID" : 1,
     "HOLDING_REGISTER" : 3,
     "START_REGISTER" : 85,
     "BYTES_TO_READ" : 2,
     "PARAMS_LIST" : ["NO"],
+    "PARAMS_UNIT" : ['ppm'],
     "OUT_TYPE" : DATA_TYPE[2],
+    "FLAG" : "M",
+    "DIAGNOSTIC_PARAMS" : ["devTemperature"],
     "ERROR_COUNT" : 0
 }
 
