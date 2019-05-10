@@ -1,14 +1,14 @@
 '''
 Created on Feb 2, 2019
 Utility module
-@author: Kumaar Jai
+@author: Ajay Rabidas
 '''
 from ctypes import cast, pointer, c_int, c_float, POINTER
 from modbusInterface import configuration as CONF
 from modbusInterface import dektosCRC
-from builtins import str
-import requests
 import time
+
+
 DATA_TYPE = CONF.DATA_TYPE
 
 
@@ -103,13 +103,7 @@ def getStringFromList(lis):
     return outStr
 
 
-def call_CPCB_API(industry_id, station_id, cpcbMap):
-    url = CONF.CPCB_API_ENDPOINT + '/industry/{}/station/{}/data'.format(industry_id, station_id)
-    print(url, cpcbMap)
-    response = requests.post(url, data=cpcbMap,  headers={'Content-Type': 'application/json', 'Authorization': 'Basic {}'.format(CONF.CPCB_ACCESS_TOKEN)})
-    print(response.content)
 
-#headers={'Content-Type': 'application/json'}
 
 
 if __name__ == '__main__':

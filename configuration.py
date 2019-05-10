@@ -10,6 +10,7 @@ BASE_PATH = 'D:/AJAY_545732/PROJECTS/Dektos/APPDATA/'
 OUTPUT_PATH = BASE_PATH+'output/'
 ARCHIVE_PATH = BASE_PATH+'archived/'
 LOG_PATH = BASE_PATH+'log/'
+LOCAL_SQLITE_DB_PATH = BASE_PATH+'localdb/'
 
 LOG_DEVICE_READER = LOG_PATH+'/dektos'  #absolute log file name for deviceReader.py
 LOG_DB_DATA_LOADER = LOG_PATH+'/dbUpload'     #absolute log file name for DbDataLoader.py

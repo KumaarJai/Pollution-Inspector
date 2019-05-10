@@ -11,6 +11,7 @@ sys.path.append("/".join(os.getcwd().split('\\')[0:-1]))
 from modbusInterface import configuration as CONF
 from modbusInterface import dektosExternalPackageInstaller as DEKTOS_INSTALLER
 from modbusInterface import util as UTIL
+from modbusInterface import dbUtil as DBUTIL
 
 LOG_FILENAME = CONF.LOG_DEVICE_READER
 
@@ -54,21 +55,33 @@ def getMacId():
 
 def generateDirectorySturcture():
     try:
-        print("Creating Archive path : "+ CONF.ARCHIVE_PATH)
+        LOGGER.info("Creating Archive path : "+ CONF.ARCHIVE_PATH)
         os.makedirs(CONF.ARCHIVE_PATH, exist_ok=True)
         
-        print("Creating Output path : "+ CONF.ARCHIVE_PATH)
+        LOGGER.info("Creating Output path : "+ CONF.ARCHIVE_PATH)
         os.makedirs(CONF.OUTPUT_PATH, exist_ok=True)
         
-        print("Creating Log path : "+ CONF.ARCHIVE_PATH)
+        LOGGER.info("Creating Log path : "+ CONF.ARCHIVE_PATH)
         os.makedirs(CONF.LOG_PATH, exist_ok=True)
+        
+        LOGGER.info("Creating Local DB path : "+ CONF.LOCAL_SQLITE_DB_PATH)
+        os.makedirs(CONF.LOCAL_SQLITE_DB_PATH, exist_ok=True)
+        
+        LOGGER.info('Creating CPCB Table in Local DB')
+        flag, error = DBUTIL.createLocalSQLiteDB()
+        
+        if flag == True:
+            LOGGER.info('table created successfully...')
+        else:
+            LOGGER.exception(error)
+            raise Exception('failed to create Local DB, check logs for details')
         
     except Exception as e:
         LOGGER.info('Error generating directory structure, Please retry...')
         LOGGER.exception(e)
         exit()
     else:
-        LOGGER.info("Directory structure successfully generated...")
+        LOGGER.info("All Set...! Directory structure successfully generated...")
 
 
 
@@ -149,7 +162,7 @@ def readSerialData(out, targetFile):
             outputParamMap[str(SERIAL_PARAMS_LIST[i])] = outData[SERIAL_PARAMS_INDEX[i]]
         paramMapJSON = json.dumps(outputParamMap)
         writetoFile(paramMapJSON, targetFile) 
-        uploadToCPCB(paramMapJSON, device)
+        prepareDataForCPCB(paramMapJSON, device)
     else:
         LOGGER.info('Cannot read to device data... send error to server')
 
@@ -222,7 +235,7 @@ def extractData(device, outData, targetFile):
     paramMapJSON = json.dumps(outputParamMap)
     
     writetoFile(paramMapJSON, targetFile) 
-    uploadToCPCB(paramMapJSON, device)
+    prepareDataForCPCB(paramMapJSON, device)
     
 
     
@@ -234,7 +247,7 @@ def writetoFile(paramMapJSON, targetFile):
 
 
 
-def uploadToCPCB(paramMapJSON, device):
+def prepareDataForCPCB(paramMapJSON, device):
     paramList = device["PARAMS_LIST"]
     unitList = device["PARAMS_UNIT"]
     diagnosticList = device["DIAGNOSTIC_PARAMS"]
@@ -260,7 +273,15 @@ def uploadToCPCB(paramMapJSON, device):
     cpcbMap["params"] = params
     cpcbMap["diagnostics"] = diagnostics
     #print(json.dumps(cpcbMap))
-    UTIL.call_CPCB_API(CONF.INDUSTRY_ID, device["STATION_ID"], json.dumps(cpcbMap))
+    
+    try:
+        loadedToLocalDB = DBUTIL.loadCPCBDataToLocalDB(CONF.INDUSTRY_ID, device["STATION_ID"], json.dumps(cpcbMap))
+        #print('loadedToLocalDB', loadedToLocalDB)
+    except Exception as e:
+        LOGGER.exception(e)
+        LOGGER.info("Couldn't load : " + cpcbMap)
+        pass
+
 
 
 
@@ -288,6 +309,6 @@ def isOutputAligned(device, outData, out):
 
 if __name__ == '__main__':
     generateDirectorySturcture()
-    connectToDevice(CONF.PROTOCOL)
+    #connectToDevice(CONF.PROTOCOL)
 
     

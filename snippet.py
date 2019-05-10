@@ -1,7 +1,7 @@
 '''
 Created on Jan 19, 2019
 
-@author: Kumaar Jai
+@author: Ajay Rabidas
 '''
 import time
 from datetime import datetime
@@ -123,12 +123,15 @@ def uploadToCPCB(paramMapJSON, device):
     cpcbMap["diagnostics"] = diagnostics
     print(json.dumps(cpcbMap))
     UTIL.call_CPCB_API(CONF.INDUSTRY_ID, device["STATION_ID"], json.dumps(cpcbMap))
+
+
     
     
 if __name__ == '__main__':
     import json
     from modbusInterface import configuration as CONF
     from modbusInterface import util as UTIL  
+    from modbusInterface import deviceReader as MAIN
 #     url = CONF.CPCB_API_ENDPOINT + '/industry/{}/station/{}/data'.format(5, '25k')
 #     print(url)
 #     
@@ -146,7 +149,10 @@ if __name__ == '__main__':
         "DIAGNOSTIC_PARAMS" : ["humidityAlert", "devTemperature"],
         "ERROR_COUNT" : 0
     }
-    uploadToCPCB(paramMapJSON, DEVICE_2)
+    #uploadToCPCB(paramMapJSON, DEVICE_2)
+    MAIN.prepareDataForCPCB(paramMapJSON, DEVICE_2)
+
+    
 #     outData = []
 #     count =0
 #     out = b''
