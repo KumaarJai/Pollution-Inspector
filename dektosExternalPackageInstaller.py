@@ -14,6 +14,7 @@ def installPackage(package):
 def installMandatoryPackages():
     installPackage('pyserial')
     installPackage('pymysql')
+    #installPackage('sqlite3')
 
 if __name__ == '__main__':
     print("Dektos Msg : Installing mandatory python packages manually")

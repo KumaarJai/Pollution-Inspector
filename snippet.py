@@ -128,29 +128,40 @@ def uploadToCPCB(paramMapJSON, device):
     
     
 if __name__ == '__main__':
-    import json
-    from modbusInterface import configuration as CONF
-    from modbusInterface import util as UTIL  
-    from modbusInterface import deviceReader as MAIN
-#     url = CONF.CPCB_API_ENDPOINT + '/industry/{}/station/{}/data'.format(5, '25k')
-#     print(url)
+    from modbusInterface import util as UTIL    
+    a=[1,2,3,4,5]
+    rows = ','.join(str(x) for x in a)
+    query = "UPDATE CPCB SET uploaded = 1 WHERE industry_id = '{}' AND station_id = '{}' AND rowid IN ({})".format('XXX', 'YYY', rows)
+    print(query)
+#     import json
+#     from modbusInterface import configuration as CONF
+   
+#     from modbusInterface import deviceReader as MAIN
+#     from modbusInterface import dektosLogger
+# 
+#     LOG_FILENAME = CONF.LOG_DB_DATA_LOADER
+#     LOGGER = dektosLogger.AppLogger(LOG_FILENAME).getLogger()
+#     LOGGER.info('Log file initiated, System starting up...') 
 #     
-    paramMapJSON = {"NO":5, "SO2":45.3, "CD":555}
-    DEVICE_2 = {
-        "STATION_ID" : "PODR_2",
-        "DEVICE_ID" : "MOD_DEV_1",
-        "SLAVE_ID" : 48,
-        "HOLDING_REGISTER" : 3,
-        "START_REGISTER" : 4096,
-        "BYTES_TO_READ" : 6,
-        "PARAMS_LIST" : ["NO","SO2","CD"],
-        "PARAMS_UNIT" : ['Kg/m3','ppm','vol%'],
-        "FLAG" : "M",
-        "DIAGNOSTIC_PARAMS" : ["humidityAlert", "devTemperature"],
-        "ERROR_COUNT" : 0
-    }
-    #uploadToCPCB(paramMapJSON, DEVICE_2)
-    MAIN.prepareDataForCPCB(paramMapJSON, DEVICE_2)
+# #     url = CONF.CPCB_API_ENDPOINT + '/industry/{}/station/{}/data'.format(5, '25k')
+# #     print(url)
+# #     
+#     paramMapJSON = {"NO":5, "SO2":45.3, "CD":555}
+#     DEVICE_2 = {
+#         "STATION_ID" : "PODR_2",
+#         "DEVICE_ID" : "MOD_DEV_1",
+#         "SLAVE_ID" : 48,
+#         "HOLDING_REGISTER" : 3,
+#         "START_REGISTER" : 4096,
+#         "BYTES_TO_READ" : 6,
+#         "PARAMS_LIST" : ["NO","SO2","CD"],
+#         "PARAMS_UNIT" : ['Kg/m3','ppm','vol%'],
+#         "FLAG" : "M",
+#         "DIAGNOSTIC_PARAMS" : ["humidityAlert", "devTemperature"],
+#         "ERROR_COUNT" : 0
+#     }
+#     #uploadToCPCB(paramMapJSON, DEVICE_2)
+#     MAIN.prepareDataForCPCB(paramMapJSON, DEVICE_2)
 
     
 #     outData = []
@@ -185,8 +196,5 @@ if __name__ == '__main__':
 #     
 #     print(CRC16().calculate(a), CRC16().calculate(x))
 
-1441686170004
-1556769939842
-    
     
     

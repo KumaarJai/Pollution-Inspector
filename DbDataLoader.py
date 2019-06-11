@@ -2,30 +2,21 @@
 Created on Jan 30, 2019
 @author: Ajay_Rabidas
 '''
-import logging as LOGGER
 import os
 import sys
-#sys.path.append('C:/Users/psingh06/Desktop/AKR/')
 sys.path.append("/".join(os.getcwd().split('\\')[0:-1]))
 
 from modbusInterface import configuration as CONF
+from modbusInterface import dektosLogger
 import pymysql
 import shutil
 from datetime import datetime, timedelta
 
 
+
 LOG_FILENAME = CONF.LOG_DB_DATA_LOADER
-#LOGGER.basicConfig(filename=LOG_FILENAME,level=LOGGER.DEBUG)
-
-LOGGER.basicConfig(
-    level=LOGGER.INFO,
-    format="%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s",
-    handlers=[
-        LOGGER.FileHandler("{0}.log".format(LOG_FILENAME)),
-        LOGGER.StreamHandler()
-    ])
-
-LOGGER.debug('Log file initiated, System starting up...') 
+LOGGER = dektosLogger.AppLogger(LOG_FILENAME).getLogger()
+LOGGER.info('Log file initiated, System starting up...') 
 
 
 def tsv_to_mysql(load_sql, host, user, password):
@@ -40,7 +31,6 @@ def tsv_to_mysql(load_sql, host, user, password):
     
     except Exception as e:
         LOGGER.info('Error: {}'.format(str(e)))
-        #sys.exit(1) 
         return 0
 
 
@@ -56,7 +46,6 @@ def initiateDataLoad():
         if len(readyFileList) > 0:
             for i in range(0, len(readyFileList)):
                 file = ""+CONF.OUTPUT_PATH + readyFileList[i]
-                #print(file)
                 load_sql = "LOAD DATA LOCAL INFILE '{}' \
                             INTO TABLE cdotsdb.demo_data FIELDS \
                             TERMINATED BY '\t' \

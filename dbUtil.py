@@ -53,4 +53,5 @@ def loadCPCBDataToLocalDB(industry_id, station_id, cpcbMap):
 
 
 if __name__ == '__main__':
-    pass
+    createLocalSQLiteDB()
+    print('LOCAL SQLITE DB Created at path : ', LOCAL_DB)

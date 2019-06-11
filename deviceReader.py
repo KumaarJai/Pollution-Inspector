@@ -3,28 +3,20 @@ Created on Jan 15, 2019
 @author: Ajay Rabidas
 '''
 
-import logging as LOGGER
 import os
 import sys
-#sys.path.append('C:/Users/psingh06/Desktop/AKR/')
 sys.path.append("/".join(os.getcwd().split('\\')[0:-1]))
 from modbusInterface import configuration as CONF
 from modbusInterface import dektosExternalPackageInstaller as DEKTOS_INSTALLER
+from modbusInterface import dektosLogger
 from modbusInterface import util as UTIL
 from modbusInterface import dbUtil as DBUTIL
 
+
+
 LOG_FILENAME = CONF.LOG_DEVICE_READER
-
-
-LOGGER.basicConfig(
-    level=LOGGER.INFO,
-    format="%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s",
-    handlers=[
-        LOGGER.FileHandler("{0}.log".format(LOG_FILENAME)),
-        LOGGER.StreamHandler()
-    ])
-
-LOGGER.debug('Log file initiated, System starting up...') 
+LOGGER = dektosLogger.AppLogger(LOG_FILENAME).getLogger()
+LOGGER.info('Log file initiated, System starting up...') 
 
 
 try:
@@ -275,7 +267,8 @@ def prepareDataForCPCB(paramMapJSON, device):
     #print(json.dumps(cpcbMap))
     
     try:
-        loadedToLocalDB = DBUTIL.loadCPCBDataToLocalDB(CONF.INDUSTRY_ID, device["STATION_ID"], json.dumps(cpcbMap))
+        DBUTIL.loadCPCBDataToLocalDB(CONF.INDUSTRY_ID, device["STATION_ID"], json.dumps(cpcbMap))
+        #loadedToLocalDB = DBUTIL.loadCPCBDataToLocalDB(CONF.INDUSTRY_ID, device["STATION_ID"], json.dumps(cpcbMap))
         #print('loadedToLocalDB', loadedToLocalDB)
     except Exception as e:
         LOGGER.exception(e)
@@ -309,6 +302,6 @@ def isOutputAligned(device, outData, out):
 
 if __name__ == '__main__':
     generateDirectorySturcture()
-    #connectToDevice(CONF.PROTOCOL)
+    connectToDevice(CONF.PROTOCOL)
 
     

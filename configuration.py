@@ -14,6 +14,7 @@ LOCAL_SQLITE_DB_PATH = BASE_PATH+'localdb/'
 
 LOG_DEVICE_READER = LOG_PATH+'/dektos'  #absolute log file name for deviceReader.py
 LOG_DB_DATA_LOADER = LOG_PATH+'/dbUpload'     #absolute log file name for DbDataLoader.py
+LOG_CPCB_UPLOADER = LOG_PATH+'/cpcbUploader'     #absolute log file name for cpcbUploader.py
 
 #Device Serial Port Connectivity Details ----------------------------------------------:
 PORT='COM7'
@@ -27,12 +28,15 @@ PROTOCOL = "MODBUS"
 #CLIENT Details ----------------------------------------------:
 INDUSTRY_NAME='CLIENTXX_001'
 INDUSTRY_ID='CL_001'
-DATA_UPLOAD_INTERVAL = 30
+DATA_UPLOAD_INTERVAL = 30   #seconds
 
 #DATABASE DETAILS : Do Not Touch
 DB_HOST_URL = 'cdotsdb.cc0wiogqy5qv.ap-northeast-2.rds.amazonaws.com'
 DB_USER = 'cdotsmasterdba'
 DB_PASSWORD = 'master.cdots'
+
+#LOCAL_SQLITE_DB_SUCCESSUPLOADS_ACTION = "DELETE"
+LOCAL_SQLITE_DB_SUCCESSUPLOADS_ACTION = "UPDATE"
 
 #CPCB Server Details
 CPCB_API_ENDPOINT = "http://localhost:5000"
@@ -82,7 +86,7 @@ DEVICE_1 = {
 
 DEVICE_2 = {
     "STATION_ID" : "PODR_2",
-    "DEVICE_ID" : "MOD_DEV_1",
+    "DEVICE_ID" : "MOD_DEV_2",
     "SLAVE_ID" : 48,
     "HOLDING_REGISTER" : 3,
     "START_REGISTER" : 4096,
@@ -97,7 +101,7 @@ DEVICE_2 = {
 
 DEVICE_3 = {
     "STATION_ID" : "PODR_3",
-    "DEVICE_ID" : "MOD_DEV_1",
+    "DEVICE_ID" : "MOD_DEV_3",
     "SLAVE_ID" : 2,
     "HOLDING_REGISTER" : 3,
     "START_REGISTER" : 0,
@@ -112,7 +116,7 @@ DEVICE_3 = {
 
 DEVICE_4 = {
     "STATION_ID" : "PODR_1",
-    "DEVICE_ID" : "MOD_DEV_1",
+    "DEVICE_ID" : "MOD_DEV_4",
     "SLAVE_ID" : 1,
     "HOLDING_REGISTER" : 3,
     "START_REGISTER" : 85,
