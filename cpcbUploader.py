@@ -133,7 +133,8 @@ def sendEachDeviceDataToCPCB():
             
     except Exception as e:
         LOGGER.info(e)
-        pass
+        time.sleep(5)
+        sendEachDeviceDataToCPCB()
  
 
 
