@@ -44,39 +44,6 @@ def getMacId():
     return ':'.join(re.findall('..', '%012x' % uuid.getnode()))
 
 
-
-def generateDirectorySturcture():
-    try:
-        LOGGER.info("Creating Archive path : "+ CONF.ARCHIVE_PATH)
-        os.makedirs(CONF.ARCHIVE_PATH, exist_ok=True)
-        
-        LOGGER.info("Creating Output path : "+ CONF.ARCHIVE_PATH)
-        os.makedirs(CONF.OUTPUT_PATH, exist_ok=True)
-        
-        LOGGER.info("Creating Log path : "+ CONF.ARCHIVE_PATH)
-        os.makedirs(CONF.LOG_PATH, exist_ok=True)
-        
-        LOGGER.info("Creating Local DB path : "+ CONF.LOCAL_SQLITE_DB_PATH)
-        os.makedirs(CONF.LOCAL_SQLITE_DB_PATH, exist_ok=True)
-        
-        LOGGER.info('Creating CPCB Table in Local DB')
-        flag, error = DBUTIL.createLocalSQLiteDB()
-        
-        if flag == True:
-            LOGGER.info('table created successfully...')
-        else:
-            LOGGER.exception(error)
-            raise Exception('failed to create Local DB, check logs for details')
-        
-    except Exception as e:
-        LOGGER.info('Error generating directory structure, Please retry...')
-        LOGGER.exception(e)
-        exit()
-    else:
-        LOGGER.info("All Set...! Directory structure successfully generated...")
-
-
-
 def connectToDevice(mode):
     LOGGER.info('Connecting to device. PROTOCOL : '+mode)
     try:
@@ -291,7 +258,6 @@ def isOutputAligned(device, outData, out):
         return False
 
 
-
 #Demo purpose only
 # def readDummyData(ser, device, targetFile):
 #     outData = [2,3,6,2,52,33,52,22,22,1,1]
@@ -301,7 +267,8 @@ def isOutputAligned(device, outData, out):
 
 
 if __name__ == '__main__':
-    generateDirectorySturcture()
+    #from modbusInterface import installer as INSTALLER
+    #INSTALLER.generateDirectorySturcture()
     connectToDevice(CONF.PROTOCOL)
 
     
