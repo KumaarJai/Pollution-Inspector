@@ -1,0 +1,201 @@
+{
+	"name": "pipelinePractice",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data Pipeline",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata Pipeline",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings",
+							"quoteAllText": true
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "CSVInputDataset",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "JsonOutputDataset",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Notify Copy Success",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Copy data Pipeline",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-25.centralindia.logic.azure.com:443/workflows/c49b93dcff844ff09c3f34efbf6df848/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ILlqZoCo8UOHyZcXL6J_51BHH-Pxmt6JqdvYnqD0e0M",
+					"method": "POST",
+					"body": {
+						"value": " {\"Message\":\"Hi All,\n The pipeline completed successfully\n \\n\\n\"\n ,\"DataFactoryName\": \"@{pipeline().DataFactory}\"\n ,\"PipelineName\": \"@{pipeline().Pipeline}\"\n }",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Notify Copy Fail",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Copy data Pipeline",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-25.centralindia.logic.azure.com:443/workflows/c49b93dcff844ff09c3f34efbf6df848/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ILlqZoCo8UOHyZcXL6J_51BHH-Pxmt6JqdvYnqD0e0M",
+					"method": "POST",
+					"body": {
+						"value": " {\"Message\":\"Hi All,\n The pipeline failed\n \\n\\n\"\n ,\"DataFactoryName\": \"@{pipeline().DataFactory}\"\n ,\"PipelineName\": \"@{pipeline().Pipeline}\"\n }",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Spark job",
+				"type": "HDInsightSpark",
+				"dependsOn": [
+					{
+						"activity": "Notify Copy Success",
+						"dependencyConditions": [
+							"Skipped"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"rootPath": "spark1",
+					"entryFilePath": "test.py",
+					"sparkJobLinkedService": {
+						"referenceName": "blobstorageLinkedService",
+						"type": "LinkedServiceReference"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "HDInsightLinkedServiceForDF",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Get Metadata Pipeline",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ReadCSV",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"exists"
+					],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Execute Pipeline from another pipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Notify Copy Success",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hivePipeline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

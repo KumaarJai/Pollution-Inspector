@@ -1,0 +1,25 @@
+{
+	"name": "ReadCSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "blobstorageLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "abc.txt",
+				"folderPath": "Spotify",
+				"container": "input-for-hdi"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

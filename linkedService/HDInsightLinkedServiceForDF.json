@@ -1,0 +1,39 @@
+{
+	"name": "HDInsightLinkedServiceForDF",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "HDInsightOnDemand",
+		"typeProperties": {
+			"clusterType": "spark",
+			"clusterSize": 2,
+			"timeToLive": "00:30:00",
+			"version": "3.6",
+			"hostSubscriptionId": "3e65521a-7044-4db1-ab57-caae9df65eb1",
+			"clusterResourceGroup": "CrystalARK",
+			"servicePrincipalId": "a13ceab2-b626-4c80-b889-00473aadb481",
+			"osType": "Linux",
+			"tenant": "5f231699-c3ea-4781-9c53-02fcb62a992b",
+			"clusterNamePrefix": "crystalarkcluster",
+			"clusterUserName": "arkadmin",
+			"clusterSshUserName": "arkadimn",
+			"sparkVersion": "",
+			"additionalLinkedServiceNames": [
+				{
+					"referenceName": "blobstorageLinkedService",
+					"type": "LinkedServiceReference"
+				}
+			],
+			"linkedServiceName": {
+				"referenceName": "blobstorageLinkedService",
+				"type": "LinkedServiceReference"
+			},
+			"headNodeSize": "",
+			"dataNodeSize": "",
+			"zookeeperNodeSize": "",
+			"subnetName": "",
+			"virtualNetworkId": "",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIlNQQVJLREFUQUZBQ1RPUlkwMDdfNDQwZmM3Y2MtZjAyNC00ZDJlLTkyMWUtY2UyOTNmOTVjYjMwIg0KfQ=="
+		}
+	}
+}

@@ -1,0 +1,82 @@
+{
+	"name": "CSVInputDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "blobstorageLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "top50.csv",
+				"container": "input-for-hdi"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"nullValue": "0",
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Prop_0",
+				"type": "String"
+			},
+			{
+				"name": "Track.Name",
+				"type": "String"
+			},
+			{
+				"name": "Artist.Name",
+				"type": "String"
+			},
+			{
+				"name": "Genre",
+				"type": "String"
+			},
+			{
+				"name": "Beats.Per.Minute",
+				"type": "String"
+			},
+			{
+				"name": "Energy",
+				"type": "String"
+			},
+			{
+				"name": "Danceability",
+				"type": "String"
+			},
+			{
+				"name": "Loudness..dB..",
+				"type": "String"
+			},
+			{
+				"name": "Liveness",
+				"type": "String"
+			},
+			{
+				"name": "Valence.",
+				"type": "String"
+			},
+			{
+				"name": "Length.",
+				"type": "String"
+			},
+			{
+				"name": "Acousticness..",
+				"type": "String"
+			},
+			{
+				"name": "Speechiness.",
+				"type": "String"
+			},
+			{
+				"name": "Popularity",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

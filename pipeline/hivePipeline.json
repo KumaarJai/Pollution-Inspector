@@ -1,0 +1,212 @@
+{
+	"name": "hivePipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "local_to_blob",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "input-for-hdi//top50.csv"
+					},
+					{
+						"name": "Destination",
+						"value": "output-of-hdi/out/"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".csv"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "SlNo",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SlNo",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Track.Name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Track.Name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Artist.Name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Artist.Name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Genre",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Genre",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Beats.Per.Minute",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Beats.Per.Minute",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Energy",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Energy",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Danceability",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Danceability",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Loudness..dB..",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Loudness..dB..",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Liveness",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Liveness",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Valence.",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Valence.",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Length.",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Length.",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "Acousticness..",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Acousticness..",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Speechiness.",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Speechiness.",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Popularity",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Popularity",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "CSVInputDataset",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSVOutputDataset",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
